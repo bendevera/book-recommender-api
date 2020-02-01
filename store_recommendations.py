@@ -8,11 +8,6 @@ import sys
 from app.server import db
 from app.server.models import Book, Recommendation
 
-'''
-Need to save:
-- r_pivot
-- corr
-'''
 
 # avoid warnings
 import warnings 
@@ -30,9 +25,6 @@ r_pivot = ratings.pivot(index="user_id", columns="book_id", values="rating")
 r_pivot = r_pivot.fillna(0)
 # transposing pivot table to have book_id as index
 r_pivot = r_pivot.T
-
-# lib_path = './app/server/lib/'
-# r_pivot.to_csv(lib_path+'r_pivot.csv', index=True)
 book_ids = r_pivot.index
 
 # ---------- nearest function -----------------
@@ -51,13 +43,6 @@ def get_nearest_recommendations(book_id):
             "id": int(curr_book_id),
             "distance": float(curr_distance)
         }
-        # curr_book = Book.query.filter_by(book_id=curr_book_id).first()
-        # if curr_book:
-        #     curr_book = curr_book.tojson()
-        #     curr_book['distance'] = float(distances.flatten()[i])
-        #     recommendations.append(curr_book)
-        # else:
-        #     print(f"Couldn't find book id: {curr_book_id}")
         recommendations.append(curr_book)
     return recommendations
 
@@ -71,10 +56,6 @@ def build_nearest_neighbors():
     # fitting model to rating_matrix
     model.fit(ratings_matrix)
 
-    # nearest_path = lib_path+'nearest.pkl'
-    # with open(nearest_path, 'wb') as f:
-    #     pickle.dump(model, f)
-    # print("NN built and saved.")
     for book_id in list(book_ids):
         curr_book = Book.query.filter_by(book_id=book_id).first()
         if curr_book:
@@ -101,12 +82,6 @@ def get_matrix_recommendations(book_id):
     while len(recommendation_ids) == 0 and threshold > .1:
         threshold -= .05
         recommendation_ids = list(book_ids[(curr_corr<1.0)&(curr_corr>threshold)])
-    # for idx in recommendation_ids:
-        # curr_book = Book.query.filter_by(book_id=idx).first()
-        # if curr_book:
-        #     recommendations.append(curr_book.tojson())
-        # else:
-        #     print(f"Couldn't find {idx}")
     return recommendation_ids
 
 def matrix_factorization():
@@ -120,11 +95,8 @@ def matrix_factorization():
     # getting correlation coef matrix of the data
     # basically each cell represents the relationship between two books
     corr = np.corrcoef(matrix)
-    # need to save corr somehow
     corr = pd.DataFrame(corr)
-    # I think this should be index=False and then no index_col when reading
-    # corr.to_csv(lib_path+'corr.csv', index=True)
-    # print("corr.csv created and saved")
+
     for book_id in list(book_ids):
         curr_book = Book.query.filter_by(book_id=book_id).first()
         if curr_book:

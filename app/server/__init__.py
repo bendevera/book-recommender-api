@@ -1,5 +1,5 @@
 # app/server/__init__.py
-print("app/server/__init__.py")
+
 import os
 
 from flask import Flask
