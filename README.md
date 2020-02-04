@@ -11,10 +11,8 @@ prod url: books.bendevera.com
 - `GET /api/books/<id>`- route to get an individual book by id.
 
 - `POST /api/recommend` - route to get book recommendations.
-
-JSON params: 
-  - book_id - int - "reference" book that is used to generate recommendations
-  - type - string - nearest/matrix/popularity - method used to generate recommendations
+  - book_id | int | [1,10000] | "reference" book that is used to generate recommendations
+  - type | string | nearest/matrix/popularity | method used to generate recommendations
   
 ## local setup
 1. install dependencies `pip install -r requirements.txt`
