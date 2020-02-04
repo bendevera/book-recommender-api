@@ -5,8 +5,18 @@ prod url: books.bendevera.com
 
 ## routes
 - GET /api/ 
+root route with constant response. 
+
+- GET /api/books
+route to get all books in the database.
+
+- GET /api/books/< id >
+route to get an individual book by id.
 
 - POST /api/recommend/
+route to get book recommendations.
+
+JSON params: 
   - book_id - int - "reference" book that is used to generate recommendations
   - type - string - nearest/matrix/popularity - method used to generate recommendations
   

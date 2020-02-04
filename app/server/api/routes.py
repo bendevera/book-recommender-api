@@ -11,6 +11,19 @@ api = Blueprint('api', __name__, url_prefix='/api')
 def index():
     return jsonify({"message": "Welcome to the book recommender API!"}), 200
 
+@api.route('/books')
+def books():
+    books = Book.query.all()
+    books = [book.tojson() for book in books]
+    return jsonify({"books": books}), 200
+
+@api.route('/books/<id>')
+def books_by_id(id):
+    book = Book.query.filter_by(id=id).first()
+    if not book:
+        return jsonify({"message": "Book not found with id {}".format(id)}), 204
+    return jsonify({"book": book.tojson()}), 200
+
 @api.route('/recommend', methods=["POST"])
 def recommend():
     params = request.json 
@@ -31,4 +44,4 @@ def recommend():
                 reference_book = reference_book.tojson()
             return jsonify({"reference": reference_book, "recommendations": recommendations}), 200
         else:
-            return jsonify({"message": "Parameter book_id is required."}), 401
+            return jsonify({"message": "Parameter book_id is required."}), 400
